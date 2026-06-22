@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>估值技能看板 | Valuation Skills Desk</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --surface-soft: #f9fbfd;
+        --text: #17201c;
+        --muted: #647067;
+        --line: #dce4df;
+        --line-strong: #c6d2cc;
+        --accent: #146c43;
+        --accent-soft: #e8f4ee;
+        --accent-dark: #0f4d32;
+        --blue-soft: #eef5fb;
+        --shadow: 0 18px 50px rgba(28, 40, 34, 0.08);
+        --radius: 8px;
+        --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        letter-spacing: 0;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 248px minmax(0, 1fr);
+      }
+
+      .rail {
+        background: #ffffff;
+        border-right: 1px solid var(--line);
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 6px 8px;
+      }
+
+      .mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 760;
+        font-size: 15px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.2;
+      }
+
+      .en {
+        color: var(--muted);
+        font-size: 0.78em;
+        font-weight: 620;
+      }
+
+      .brand p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .nav-group {
+        display: grid;
+        gap: 7px;
+      }
+
+      .nav-title {
+        padding: 0 8px;
+        color: #7a857e;
+        font-size: 11px;
+        font-weight: 720;
+        text-transform: uppercase;
+      }
+
+      .nav-item {
+        width: 100%;
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: var(--radius);
+        color: var(--text);
+        padding: 11px 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        text-align: left;
+        transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--accent-soft);
+        border-color: #cbe4d8;
+        color: var(--accent-dark);
+      }
+
+      .nav-icon {
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        background: #fff;
+        flex: 0 0 auto;
+      }
+
+      .nav-icon svg {
+        width: 15px;
+        height: 15px;
+        stroke-width: 2;
+      }
+
+      .nav-copy {
+        min-width: 0;
+      }
+
+      .nav-copy strong {
+        display: block;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+
+      .nav-copy span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.45;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .rail-note {
+        margin-top: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 13px;
+        background: var(--surface-soft);
+      }
+
+      .rail-note strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .rail-note p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      main {
+        min-width: 0;
+        padding: 28px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 22px;
+      }
+
+      .topbar h2 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 46px);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+      }
+
+      .topbar p {
+        max-width: 640px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        line-height: 1.65;
+        font-size: 15px;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .button {
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: var(--text);
+        border-radius: var(--radius);
+        height: 38px;
+        padding: 0 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 680;
+        cursor: pointer;
+        transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(28, 40, 34, 0.1);
+      }
+
+      .button.primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(330px, 0.85fr);
+        gap: 18px;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .panel-header {
+        padding: 18px 18px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .panel-header h3 {
+        margin: 0;
+        font-size: 17px;
+      }
+
+      .panel-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 26px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent-dark);
+        font-size: 12px;
+        font-weight: 740;
+        white-space: nowrap;
+      }
+
+      .status::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .skill-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .skill-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 15px;
+        background: var(--surface-soft);
+        min-height: 214px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .skill-card.selected {
+        border-color: #9dcdb7;
+        background: #f1faf5;
+      }
+
+      .card-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .card-icon {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+      }
+
+      .card-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .skill-card h4 {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .skill-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #526057;
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 680;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+      }
+
+      .mini-btn {
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: var(--text);
+        border-radius: 7px;
+        padding: 8px 9px;
+        font-size: 12px;
+        font-weight: 720;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .mini-btn:hover {
+        background: var(--blue-soft);
+      }
+
+      .workflow {
+        margin-top: 18px;
+        padding: 18px;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .step {
+        padding: 16px;
+        background: #fff;
+        border-right: 1px solid var(--line);
+        min-height: 150px;
+      }
+
+      .step:last-child {
+        border-right: none;
+      }
+
+      .step-num {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 780;
+        margin-bottom: 12px;
+      }
+
+      .step h4 {
+        margin: 0 0 7px;
+        font-size: 14px;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .side-stack {
+        display: grid;
+        gap: 18px;
+      }
+
+      .prompt-list {
+        padding: 14px 18px 18px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .prompt {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+        padding: 12px;
+      }
+
+      .prompt-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .prompt strong {
+        font-size: 13px;
+      }
+
+      .prompt code {
+        display: block;
+        color: #344039;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .copy {
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        border-radius: 7px;
+        color: var(--accent-dark);
+        height: 28px;
+        padding: 0 9px;
+        font-size: 11px;
+        font-weight: 760;
+        cursor: pointer;
+      }
+
+      .dcf-preview {
+        padding: 18px;
+      }
+
+      .input-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .field {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 10px;
+        background: var(--surface-soft);
+      }
+
+      .field span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 720;
+      }
+
+      .field strong {
+        display: block;
+        font-size: 16px;
+        margin-top: 5px;
+      }
+
+      .json-box {
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #111815;
+        color: #dbece3;
+        overflow: hidden;
+      }
+
+      .json-box pre {
+        margin: 0;
+        padding: 14px;
+        overflow: auto;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .toast {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        background: #15211b;
+        color: #fff;
+        border-radius: var(--radius);
+        padding: 11px 13px;
+        box-shadow: var(--shadow);
+        font-size: 13px;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 160ms ease, transform 160ms ease;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1050px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .rail {
+          position: sticky;
+          top: 0;
+          z-index: 4;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+          padding: 14px;
+        }
+
+        .brand,
+        .rail-note,
+        .nav-title {
+          display: none;
+        }
+
+        .nav-group {
+          display: flex;
+          overflow-x: auto;
+          padding-bottom: 2px;
+        }
+
+        .nav-item {
+          min-width: 210px;
+        }
+
+        main {
+          padding: 18px;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          display: grid;
+        }
+
+        .toolbar {
+          justify-content: flex-start;
+        }
+
+        .skill-grid,
+        .steps {
+          grid-template-columns: 1fr;
+        }
+
+        .step {
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .step:last-child {
+          border-bottom: none;
+        }
+
+        .input-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand">
+          <div class="mark">VS</div>
+          <div>
+            <h1>估值技能看板</h1>
+            <p>Valuation Skills Desk</p>
+          </div>
+        </div>
+
+        <nav class="nav-group" aria-label="技能导航">
+          <div class="nav-title">技能 Skills</div>
+          <button class="nav-item active" data-skill="dcf">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg>
+            </span>
+            <span class="nav-copy"><strong>DCF 估值</strong><span>Valuation scenarios</span></span>
+          </button>
+          <button class="nav-item" data-skill="filing">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v6h5"/><path d="M9 13h7"/><path d="M9 17h5"/></svg>
+            </span>
+            <span class="nav-copy"><strong>SEC 财报分析</strong><span>Filing red flags</span></span>
+          </button>
+          <button class="nav-item" data-skill="memo">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H5z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
+            </span>
+            <span class="nav-copy"><strong>投资备忘录</strong><span>Investment memo</span></span>
+          </button>
+        </nav>
+
+        <div class="rail-note">
+          <strong>怎么用</strong>
+          <p>选一个技能，复制提示词，把股票代码、财报链接或估值假设替换进去，再发给 Codex。</p>
+        </div>
+      </aside>
+
+      <main>
+        <section class="topbar">
+          <div>
+            <h2>估值技能看板 <span class="en">Valuation Skills Desk</span></h2>
+            <p>给股票研究用的小工作台：先看财报和风险，再做透明的 DCF 估值，最后整理成一份好读的投资备忘录。</p>
+          </div>
+          <div class="toolbar">
+            <a class="button" href="../../equity-valuation-dcf/SKILL.md">打开 DCF skill</a>
+            <button class="button primary" data-copy="请使用 $sec-filing-analysis、$equity-valuation-dcf 和 $investment-memo-writer，帮我从财报分析、DCF 估值到投资备忘录完整分析一家公司。">复制完整流程</button>
+          </div>
+        </section>
+
+        <div class="layout">
+          <div>
+            <section class="panel" aria-labelledby="skills-title">
+              <div class="panel-header">
+                <div>
+                  <h3 id="skills-title">技能入口 <span class="en">Skill launchpad</span></h3>
+                  <p>每张卡片都连接到本地 skill 文件，并配好常用提示词。</p>
+                </div>
+                <span class="status">已就绪 Ready</span>
+              </div>
+
+              <div class="skill-grid">
+                <article class="skill-card selected" data-card="dcf">
+                  <div class="card-top">
+                    <div>
+                      <div class="card-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg>
+                      </div>
+                    </div>
+                    <span class="chip">脚本已测试</span>
+                  </div>
+                  <h4>DCF 估值 <span class="en">DCF Valuation</span></h4>
+                  <p>预测自由现金流，计算企业价值和股权价值，并检查 WACC 与永续增长率的敏感性。</p>
+                  <div class="chips">
+                    <span class="chip">悲观/基准/乐观</span>
+                    <span class="chip">JSON 输入</span>
+                  </div>
+                  <div class="card-actions">
+                    <a class="mini-btn" href="../../equity-valuation-dcf/SKILL.md">打开 skill</a>
+                    <button class="mini-btn" data-copy="请使用 $equity-valuation-dcf 为 [股票代码] 做 DCF 估值。请给出悲观、基准、乐观三种情景，说明关键假设、WACC 与永续增长率敏感性，以及估值含义。">复制提示词</button>
+                  </div>
+                </article>
+
+                <article class="skill-card" data-card="filing">
+                  <div class="card-top">
+                    <div class="card-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v6h5"/><path d="M9 13h7"/><path d="M9 17h5"/></svg>
+                    </div>
+                    <span class="chip">含检查清单</span>
+                  </div>
+                  <h4>SEC 财报分析 <span class="en">Filing Analysis</span></h4>
+                  <p>审查财报里的业务驱动、现金流质量、债务、股权稀释和会计红旗。</p>
+                  <div class="chips">
+                    <span class="chip">10-K / 10-Q</span>
+                    <span class="chip">红旗检查</span>
+                  </div>
+                  <div class="card-actions">
+                    <a class="mini-btn" href="../../sec-filing-analysis/SKILL.md">打开 skill</a>
+                    <button class="mini-btn" data-copy="请使用 $sec-filing-analysis 审查 [公司名] 的 [10-K/10-Q/S-1]。请提取业务驱动、现金流质量、资产负债表风险、稀释、会计红旗和对估值的影响。">复制提示词</button>
+                  </div>
+                </article>
+
+                <article class="skill-card" data-card="memo">
+                  <div class="card-top">
+                    <div class="card-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H5z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
+                    </div>
+                    <span class="chip">模板已备好</span>
+                  </div>
+                  <h4>投资备忘录 <span class="en">Investment Memo</span></h4>
+                  <p>把研究整理成一页清楚的 memo：投资论点、估值区间、风险、催化剂和待验证问题。</p>
+                  <div class="chips">
+                    <span class="chip">投资论点</span>
+                    <span class="chip">反方观点</span>
+                  </div>
+                  <div class="card-actions">
+                    <a class="mini-btn" href="../../investment-memo-writer/SKILL.md">打开 skill</a>
+                    <button class="mini-btn" data-copy="请使用 $investment-memo-writer，基于下面的财报分析和估值证据，为 [股票代码] 写一份投资备忘录。请包括投资论点、差异化观点、估值区间、风险、催化剂和待验证问题。">复制提示词</button>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel workflow" aria-labelledby="workflow-title">
+              <div class="panel-header" style="padding: 0;">
+                <div>
+                  <h3 id="workflow-title">研究流程 <span class="en">Research workflow</span></h3>
+                  <p>想完整分析一只股票时，按这个顺序使用三个技能。</p>
+                </div>
+                <span class="status">3 步</span>
+              </div>
+              <div class="steps">
+                <article class="step">
+                  <div class="step-num">1</div>
+                  <h4>财报审查</h4>
+                  <p>从原始财报开始，先把基准年财务数据和主要风险弄清楚，再建模型。</p>
+                </article>
+                <article class="step">
+                  <div class="step-num">2</div>
+                  <h4>DCF 估值</h4>
+                  <p>把商业故事转成增长、利润率、再投资、折现率等假设，并测试估值驱动因素。</p>
+                </article>
+                <article class="step">
+                  <div class="step-num">3</div>
+                  <h4>备忘录整理</h4>
+                  <p>写清楚投资论点、反方观点、估值区间，以及什么证据会改变判断。</p>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <aside class="side-stack">
+            <section class="panel" aria-labelledby="prompt-title">
+              <div class="panel-header">
+                <div>
+                  <h3 id="prompt-title">提示词库 <span class="en">Prompt library</span></h3>
+                  <p>复制后，把方括号里的占位内容换成你的股票或材料。</p>
+                </div>
+              </div>
+              <div class="prompt-list">
+                <article class="prompt">
+                  <div class="prompt-head">
+                    <strong>完整研究流程</strong>
+                    <button class="copy" data-copy="请先用 $sec-filing-analysis，再用 $equity-valuation-dcf，最后用 $investment-memo-writer 分析 [股票代码]。请从最新年报开始，建立保守的悲观/基准/乐观假设，最后输出一份投资备忘录。">复制</button>
+                  </div>
+                  <code>请用 $sec-filing-analysis -> $equity-valuation-dcf -> $investment-memo-writer 分析 [股票代码]。</code>
+                </article>
+                <article class="prompt">
+                  <div class="prompt-head">
+                    <strong>只做 DCF</strong>
+                    <button class="copy" data-copy="请使用 $equity-valuation-dcf 为 [股票代码] 建立 DCF。如果缺少假设，请使用保守占位值并清楚标注。">复制</button>
+                  </div>
+                  <code>请用 $equity-valuation-dcf 为 [股票代码] 做 DCF 估值。</code>
+                </article>
+                <article class="prompt">
+                  <div class="prompt-head">
+                    <strong>财报红旗检查</strong>
+                    <button class="copy" data-copy="请使用 $sec-filing-analysis 检查 [公司名] 的收入质量、现金流质量、债务、股权稀释和会计红旗。">复制</button>
+                  </div>
+                  <code>请用 $sec-filing-analysis 检查 [公司名] 是否有财报红旗。</code>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel dcf-preview" aria-labelledby="dcf-title">
+              <div class="panel-header" style="padding: 0;">
+                <div>
+                  <h3 id="dcf-title">DCF 输入预览 <span class="en">Input preview</span></h3>
+                  <p>脚本接受简洁 JSON，输出估值结果和敏感性分析。</p>
+                </div>
+              </div>
+              <div class="input-grid">
+                <div class="field"><span>基准收入</span><strong>1000m</strong></div>
+                <div class="field"><span>预测年数</span><strong>5</strong></div>
+                <div class="field"><span>WACC</span><strong>9.0%</strong></div>
+                <div class="field"><span>永续增长</span><strong>3.0%</strong></div>
+              </div>
+              <div class="json-box">
+                <pre>{
+  "revenue_growth": [0.08, 0.07, 0.06],
+  "operating_margin": [0.18, 0.19, 0.20],
+  "wacc": 0.09,
+  "terminal_growth": 0.03
+}</pre>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <div class="toast" role="status" aria-live="polite">已复制提示词</div>
+
+    <script>
+      const cards = document.querySelectorAll("[data-card]");
+      const navItems = document.querySelectorAll("[data-skill]");
+      const toast = document.querySelector(".toast");
+      let toastTimer;
+
+      function setActive(skill) {
+        cards.forEach((card) => card.classList.toggle("selected", card.dataset.card === skill));
+        navItems.forEach((item) => item.classList.toggle("active", item.dataset.skill === skill));
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+      }
+
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("已复制提示词");
+        } catch {
+          const area = document.createElement("textarea");
+          area.value = text;
+          document.body.appendChild(area);
+          area.select();
+          document.execCommand("copy");
+          area.remove();
+          showToast("已复制提示词");
+        }
+      }
+
+      navItems.forEach((item) => {
+        item.addEventListener("click", () => setActive(item.dataset.skill));
+      });
+
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", () => copyText(button.dataset.copy));
+      });
+    </script>
+  </body>
+</html>
